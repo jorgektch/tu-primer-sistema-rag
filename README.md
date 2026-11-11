@@ -1,405 +1,338 @@
 <!-- .slide: class="cover" -->
 
 <div class="cover-card">
-  <p class="cover-kicker" data-config="eyebrow">OPEN SOURCE · MARKDOWN PRESENTATIONS</p>
-  <h1 class="cover-title" data-config="title">README to Slides</h1>
-  <p class="cover-description" data-config="subtitle">Documenta una vez. Explica, demuestra y presenta directamente desde Markdown.</p>
+  <p class="cover-kicker" data-config="eyebrow">TALLER PRÁCTICO · IA GENERATIVA</p>
+  <h1 class="cover-title" data-config="title">Tu primer sistema RAG</h1>
+  <p class="cover-description" data-config="subtitle">De documentos a respuestas con evidencia: aprende, experimenta y construye.</p>
   <div class="cover-separator"></div>
   <p class="cover-author" data-config="name">Jorge Jesús Quispe Villaverde</p>
   <p class="cover-role" data-config="role">AI Engineer · Applied AI Researcher · AI Mentor</p>
-  <div class="contact-row" aria-label="Contacto del expositor">
-    <a class="contact-email" data-config="email" href="mailto:jorgektch@gmail.com">jorgektch@gmail.com</a>
-    <div class="contact-socials" aria-label="Redes del expositor">
-      <a class="social-icon" data-social="github" href="https://github.com/jorgektch" aria-label="GitHub" title="GitHub"><i class="fa-brands fa-github" aria-hidden="true"></i><span class="social-label">GitHub</span></a>
-      <a class="social-icon" data-social="instagram" href="https://www.instagram.com/jorgektch" aria-label="Instagram" title="Instagram"><i class="fa-brands fa-instagram" aria-hidden="true"></i><span class="social-label">Instagram</span></a>
-      <a class="social-icon" data-social="tiktok" href="https://www.tiktok.com/@jorgektch" aria-label="TikTok" title="TikTok"><i class="fa-brands fa-tiktok" aria-hidden="true"></i><span class="social-label">TikTok</span></a>
-      <span class="social-handle" data-config="handle">/jorgektch</span>
-    </div>
-  </div>
+  <div class="contact-row"><a class="contact-email" data-config="email" href="mailto:jorgektch@gmail.com">jorgektch@gmail.com</a><div class="contact-socials"><a class="social-icon" data-social="github" href="https://github.com/jorgektch" aria-label="GitHub"><i class="fa-brands fa-github"></i><span class="social-label">GitHub</span></a><span class="social-handle" data-config="handle">/jorgektch</span></div></div>
 </div>
 
 <div class="readme-only">
-  <p><strong>Una sola fuente Markdown, dos experiencias:</strong> documentación en GitHub y presentación interactiva en el navegador.</p>
-  <p><a href="https://jorgektch.github.io/readme-to-slides/">▶ Live Demo</a> · <a href="https://github.com/new?template_name=readme-to-slides&amp;template_owner=jorgektch">Use this template</a> · <a href="https://github.com/jorgektch/readme-to-slides/blob/main/presentation.config.json">Configuration</a> · <a href="https://github.com/jorgektch/readme-to-slides/blob/main/LICENSE">MIT License</a></p>
-  <p><img src="assets/images/preview.png" alt="Vista previa ilustrativa del tema oscuro de README to Slides" width="860"></p>
-  <p><strong>Recursos remotos:</strong> <a href="docs/REMOTE_READMES.md">rutas relativas en READMEs externos</a> · <strong>Actualizaciones:</strong> <a href="docs/ENGINE_UPDATES.md">motor versionado y PRs opcionales</a>.</p>
-  <p><strong>Inicio rápido:</strong> selecciona <strong>Use this template</strong>, edita <code>presentation.config.json</code> y <code>README.md</code> (la URL del repositorio se detecta automáticamente en GitHub Pages), y activa <strong>Settings → Pages → Deploy from a branch → main / (root)</strong>. No necesitas PowerPoint, Canva ni un proceso de compilación.</p>
-  <p><strong>Antes de publicar:</strong> revisa <a href="docs/QUALITY_ASSURANCE.md">la lista de pruebas</a> y personaliza tu presentación cuando quieras. Una copia nueva pasa Actions sin configurar <code>presentation.repositoryUrl</code>; puedes añadirla opcionalmente para vistas locales.</p>
+
+**Taller reproducible · 90 minutos.** Este README es también la presentación navegable del taller. [Abrir demo participativa](demo/) · [Fundamentos](docs/FUNDAMENTOS.md) · [Guía del instructor](docs/GUIA_DEL_INSTRUCTOR.md) · [Ejercicios](ejercicios/retos.md) · [Integración con Agentes y MCP](docs/INTEGRATION_NOTES.md).
+
+**Inicio rápido (Python 3.11+, sin claves):**
+
+```bash
+python 01_explorar_documentos.py
+python 02_busqueda_semantica_aproximada.py "¿Cuánto demora un envío en Lima?"
+python 03_rag_con_llm.py "¿Cuál es la política de cambios?"
+python 04_evaluacion_offline.py
+python -m http.server 8000
+```
+
+Abre `http://localhost:8000/demo/` para la experiencia con el público. **Sin clave:** la tercera etapa muestra extractos, no respuesta generativa. **Con clave:** define `GEMINI_API_KEY` únicamente en tu entorno local y ejecuta el tercer script; se enviarán pregunta y fragmentos a la API externa. `requirements.txt` no requiere paquetes adicionales para este taller.
+
+**Código y material pedagógico:** [Exploración](01_explorar_documentos.py) · [Búsqueda](02_busqueda_semantica_aproximada.py) · [LLM opcional](03_rag_con_llm.py) · [Tests](tests/test_rag.py) · [Seguridad](docs/SEGURIDAD.md).
+
 </div>
 
-Note: El mismo README puede verse como documento en GitHub y como una presentación Reveal.js en GitHub Pages. Los datos de autor son los valores predeterminados de la plantilla.
+Note: Abrir con una pregunta al público. Explicar desde el principio qué fases son offline y cuándo entra un modelo real.
 
 ---
 
-## El problema: documentar y presentar por separado
+## 01 · El reto: una IA que no conoce nuestras reglas
 
-En un taller técnico solemos mantener **dos versiones de lo mismo**:
+Imagina una tienda ficticia llamada **DemoBici**. Tiene políticas de garantías, envío, cambios y mantenimiento que un modelo de lenguaje no tiene por qué conocer.
 
-- Un README con código, diagramas, enlaces y pasos reproducibles.
-- Una presentación que se desactualiza cuando cambia el proyecto.
+**Pregunta al público:** «¿Qué ocurre si le pedimos a un chatbot que responda sin consultar esos documentos?»
 
-**README to Slides** evita duplicar ese trabajo: el contenido se escribe una vez en Markdown y se presenta directamente desde el repositorio.
+- Puede adivinar o inventar políticas.
+- Puede contestar con datos antiguos.
+- No puede justificar sus afirmaciones con nuestros documentos.
 
-> Write once. Document and present anywhere.
+**Objetivo:** responder a partir de evidencia recuperada, no de suposiciones.
 
----
-
-## Quick Start: tu primera presentación
-
-1. Abre **[Use this template](https://github.com/new?template_name=readme-to-slides&template_owner=jorgektch)** y crea tu repositorio.
-2. Personaliza `presentation.config.json` y sustituye las secciones de este `README.md` por tu charla. `presentation.repositoryUrl` es opcional: GitHub Pages detecta el repositorio automáticamente.
-3. Activa **GitHub Pages**: `Settings → Pages → main → /(root)` y abre la URL que genere GitHub.
-
-No necesitas una API key, ni Node.js, ni ejecutar un generador para **usar** la presentación. GitHub Pages sirve el HTML y Reveal.js interpreta el Markdown en el navegador.
-
-**Alternativa local:** `python -m http.server 8000` y abre `http://localhost:8000`.
-
-**Temas y multimedia:** puedes elegir `theme.mode` (`dark`, `light`, `auto`) y pegar enlaces a YouTube, Vimeo o MP4. En Slides se convierten en reproductores; en GitHub siguen siendo enlaces.
+Note: Votar opciones: inventa, pregunta más, busca documentación. No prometer que RAG elimina toda alucinación.
 
 ---
 
-## ¿Para quién sirve esta plantilla?
+## 02 · ¿Qué es RAG?
 
-<div class="feature-grid">
-  <div class="feature-card"><span class="card-kicker">01 · EDUCACIÓN</span><h3>Docentes y mentores</h3><p>Talleres reproducibles con teoría, ejemplos de código y ejercicios en el mismo repositorio.</p></div>
-  <div class="feature-card"><span class="card-kicker">02 · COMUNIDAD</span><h3>DevRel y speakers</h3><p>Charlas versionadas con Git: arquitectura, demos, tablas, diagramas y notas.</p></div>
-  <div class="feature-card"><span class="card-kicker">03 · PRODUCTO</span><h3>Equipos de ingeniería</h3><p>Compartir propuestas técnicas, decisiones de diseño y retrospectivas sin duplicar documentos.</p></div>
-</div>
-
-**No pretende reemplazar todas las herramientas de diseño visual.** Su fortaleza es el contenido técnico, reproducible y mantenido como código.
-
----
-
-## Qué puedes incluir en los slides
-
-| Necesidad | Formato en README | En la presentación |
-| :--- | :--- | :--- |
-| Explicar un sistema | Diagrama `mermaid` | SVG navegable |
-| Comparar alternativas | Tabla Markdown | Tabla estilizada |
-| Mostrar una implementación | Bloque `js`, `python`, etc. | Código resaltado |
-| Ilustrar una idea | Imagen Markdown / HTML | Fotografía o captura |
-| Guiar una demostración | Lista + fragments | Aparición progresiva |
-| Profundizar sin saturar | Separador `--` | Diapositiva vertical |
-| Recordar qué decir | Línea `Note:` | Notas del expositor (`S`) |
-| Incorporar multimedia | Enlace a YouTube, Vimeo o MP4 | Reproductor incrustado |
-| Elegir un estilo | `theme.mode` en JSON | Dark / Light / Auto |
-
-**Todo ese contenido vive en este archivo.**
-
-**Enlaces compartibles:** la URL refleja cada diapositiva. Al recargar con `F5`, Reveal.js conserva la posición horizontal o vertical.
-
----
-
-## Videos: un enlace Markdown, un reproductor
-
-La plantilla reconoce enlaces a **YouTube, Vimeo y videos MP4/WebM/Ogg** y crea un reproductor en la presentación. En GitHub, el mismo contenido sigue siendo un enlace.
-
-[▶ Video: clip MP4 de demostración (MDN)](https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4)
-
-**En los slides:** reproductor integrado. **En GitHub:** enlace normal. Reproducción automática desactivada.
-
-Note: Es un video de demostración alojado por MDN. No explica la plantilla, sino que demuestra la transformación de un enlace Markdown en reproductor; reemplázalo por tu grabación propia cuando personalices el repositorio.
-
----
-
-## Tres maneras de elegir el tema
-
-| Modo | Configuración | Resultado |
-| :--- | :--- | :--- |
-| Oscuro | `"mode": "dark"` | Fondo azul profundo y turquesa; diseño original |
-| Claro | `"mode": "light"` | Fondo claro y acento verde azulado accesible |
-| Automático | `"mode": "auto"` | Sigue la preferencia de tema del dispositivo |
-
-El botón de **luna / sol / modo automático** en el panel inferior permite alternar sin editar el README. El tema también actualiza **diagramas Mermaid, tablas, código y portada**.
-
-Para personalizar colores, usa `theme.colors` (oscuro) y `theme.lightColors` (claro) en el JSON. La elección manual del visitante se recuerda en ese navegador.
-
----
-
-## Arquitectura de README to Slides
+**Retrieval-Augmented Generation** = **recuperación + generación aumentada por contexto**.
 
 ```mermaid
 flowchart LR
-    A["README.md"] --> B["Reveal Markdown"]
-    C["presentation.config.json"] --> D["app.mjs"]
-    E["theme.css"] --> D
-    B --> F["Slides interactivas"]
-    D --> F
-    G["Mermaid"] --> F
-    F --> H["GitHub Pages"]
+    U["Pregunta"] --> R["Recuperar fragmentos"]
+    D[("Documentos")] --> R
+    R --> C["Contexto + pregunta"]
+    C --> L["LLM"]
+    L --> A["Respuesta con referencias"]
 ```
 
-**Idea clave:** Markdown es la fuente del contenido; JavaScript organiza la experiencia y CSS define el diseño. No se genera un archivo `.pptx`.
+RAG **no es fine-tuning**. La información sigue fuera de los pesos del modelo. Las referencias deben ser verificadas: mostrarlas no garantiza que el modelo las use correctamente.
 
-Note: Distinguir el contenido (README), la configuración (JSON), la aplicación (JS) y el estilo (CSS).
+---
 
---
+## 03 · ¿Cuándo usar RAG?
 
-### Arquitectura interna: responsabilidades
+| Buena aplicación | No basta con RAG |
+|---|---|
+| FAQs sobre documentos | Stock actual de productos |
+| Manuales y políticas internas | Efectuar pagos o acciones |
+| Base de conocimiento de soporte | Verificar autorizaciones |
+| Consultas con trazabilidad | Actualizar precios en tiempo real |
+
+**Idea clave:** para *saber*, recupera documentos. Para *actuar* o consultar estado en vivo, usa herramientas autorizadas.
+
+Note: Aquí aparece la conexión con los talleres de agentes y MCP.
+
+---
+
+## 04 · Primera mitad: construir el índice
 
 ```mermaid
-flowchart TD
-    A["GitHub Pages"] --> B["index.html"]
-    B --> C["assets/js/app.mjs"]
-    C --> D["assets/js/config.mjs"]
-    C --> E["Reveal.js"]
-    E --> F["README.md"]
-    C --> G["Mermaid"]
-    C --> H["presentation.config.json"]
-    C --> I["theme.css"]
+flowchart LR
+ A["Documentos"] --> B["Limpiar"]
+ B --> C["Dividir en chunks"]
+ C --> D["Representar texto"]
+ D --> E[("Índice de búsqueda")]
 ```
 
-**Desglose:** `config.mjs` valida opciones y URLs; `app.mjs` inicializa Reveal.js, navegación, contenido y diagramas.
+- **Chunk:** fragmento con identificador y vínculo al documento de origen.
+- **Overlap:** solapamiento para conservar contexto.
+- **Índice:** estructura que permite localizar los fragmentos relevantes.
+
+Este taller usa **TF-IDF** con Python estándar para aprender sin cuentas ni costos.
 
 ---
 
-## Una presentación también puede incluir fotografías
+## 05 · Segunda mitad: responder
 
-![Equipo trabajando en un portátil con código](https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=1300&q=80)
+```mermaid
+flowchart LR
+ U["Pregunta"] --> Q["Vectorizar consulta"]
+ Q --> S["Ranking coseno"]
+ I[("Chunks indexados")] --> S
+ S --> K["Top-k fragmentos"]
+ K --> P["Prompt + contexto"]
+ P --> G["LLM opcional"]
+ G --> A["Respuesta + citas"]
+```
 
-Una fotografía bien elegida introduce un caso, explica el contexto y hace más humana una charla técnica.
-
-<small>Imagen externa ilustrativa: [Unsplash](https://unsplash.com/). Puedes utilizar tus propias imágenes dentro de `assets/images/` para mejorar la reproducibilidad.</small>
-
----
-
-## Vista previa del estilo de la plantilla
-
-![Vista previa ilustrativa de README to Slides, con portada oscura y turquesa](assets/images/preview.png)
-
-La plantilla incluye una **vista previa ilustrativa del tema** en el repositorio. Puedes sustituirla por capturas reales de tu propia charla.
-
-**Consejo:** evita capturas de código si puedes usar bloques Markdown: el texto será más legible, seleccionable y actualizable.
+En el modo offline inspeccionamos *fragmentos recuperados*, **no** una respuesta generada. Solo `03_rag_con_llm.py`, configurado con API key, invoca un LLM externo.
 
 ---
 
-## Estructura del Markdown: horizontal y vertical
+## 06 · ¿Y los embeddings semánticos?
 
-| Escribe en el README | Resultado en Reveal.js |
-| :--- | :--- |
-| `---` en una línea | Siguiente tema horizontal `→` |
-| `--` en una línea | Detalle vertical `↓` |
-| `Note: Explica este paso` | Nota del presentador (`S`) |
-| `<!-- .element: class="fragment" -->` | Revelar progresivamente |
+**TF-IDF:** representa términos según su frecuencia e importancia en el corpus. Tiene límites con sinónimos y paráfrasis.
 
-**Navegación:** las flechas `← →` cambian de tema y las `↑ ↓` navegan detalles. `Esc` abre la vista general. La barra incluye **Inicio**, **Final**, **Tema** y **Repo**.
+**Embeddings densos:** representaciones numéricas aprendidas por un modelo; pueden acercar frases relacionadas aunque no compartan palabras.
 
-**Interfaz para exponer:** el contador permanece visible en la esquina inferior izquierda. Los controles aparecen al inicio y se ocultan tras 3 segundos sin interacción. Acerca el mouse a la esquina inferior derecha o utiliza `Tab` para recuperarlos; en un dispositivo táctil, toca el botón `···`. Se puede desactivar esta ocultación desde el JSON.
+**Coseno:** una forma de medir similitud entre vectores. No significa que todas las representaciones sean equivalentes.
 
-En la diapositiva anterior existe una subdiapositiva vertical: prueba el botón `↓` cuando esté disponible.
+**Extensión futura:** sustituir TF-IDF por embeddings y un índice vectorial sin cambiar el contrato de documentos ni las fuentes.
+
+Note: Evitar llamar a los vectores TF-IDF "embeddings semánticos".
 
 ---
 
-## Configuración: una sola fuente para personalizar
+## 07 · Un corpus creado para aprender
+
+`data/conocimiento.json` incluye **8 documentos ficticios**: cambios, envíos, garantías, seguridad, mantenimiento, promociones, participación y límite del stock.
+
+Cada documento lleva `id`, `titulo`, `categoria` y `texto`.
 
 ```json
 {
-  "presentation": {
-    "title": "README to Slides",
-    "titleFromRepository": false
-  },
-  "slides": {
-    "width": 1280,
-    "height": 720,
-    "transition": "fade",
-    "autoSlideMs": 0
-  }
+  "id": "DOC-02",
+  "titulo": "Envíos y recojo",
+  "categoria": "logistica"
 }
 ```
 
-Esto es un **extracto** de `presentation.config.json`: allí puedes ajustar portada, autor, contactos, apariencia y navegación sin modificar JavaScript.
+Usamos identificadores estables para construir citas auditables, sin información de clientes.
 
 ---
 
-## Configuración esencial: qué puedes parametrizar
-
-| Grupo JSON | Parámetros principales |
-| :--- | :--- |
-| `presentation` | Título, subtítulo, encabezado y título automático |
-| `presenter` | Nombre, rol, email, usuario y redes |
-| `theme.colors` | Fondo, texto, acento, panel y bordes |
-| `theme.fonts` | Fuente de títulos, cuerpo y código |
-| `slides` | Tamaño, margen, transición, velocidad y centrado |
-| `slides.autoSlideMs` | Avance automático por diapositiva en milisegundos (`0` = manual) |
-| `slides.autoSlideStoppable` | Detener el avance automático al interactuar |
-
-**El JSON reúne la configuración habitual de una charla sin editar el visor.**
-
----
-
-## Configuración avanzada: navegación y multimedia
-
-| Grupo JSON | Parámetros principales |
-| :--- | :--- |
-| `slides.navigationVisibility` | `auto` (contextual), `always` o `hidden` |
-| `slides.navigationHideDelayMs` | Retraso de ocultación (500–15000 ms) |
-| `slides.navigationRevealZonePx` | Área que revela el menú al acercar el mouse |
-| `slides.autoFitContent` | Ajustar moderadamente los slides con exceso de contenido |
-| `slides.fitSafeGapPx` | Espacio libre mínimo dentro del lienzo (0–100 px) |
-| `slides` | Contador, botón Repo y carga de otro README mediante `?url=` |
-| `theme.mode` | `dark`, `light` o `auto` (preferencia del sistema) |
-| `theme.lightColors` | Colores independientes para modo claro |
-| `theme.showToggle` | Selector de tema: oscuro, claro y automático |
-| `media` | Enlaces de video, reproducción automática, carga diferida y tamaño máximo |
-
-**Nota:** si el contenido no cabe ni tras un ajuste ligero, divide el slide con `---` o `--`. No se ocultan textos ni celdas de tabla.
----
-
-## Código real: inicialización de Reveal.js
-
-```javascript
-await Reveal.initialize({
-  hash: true,
-  width: config.slides.width,
-  height: config.slides.height,
-  transition: config.slides.transition,
-  center: config.slides.center,
-  navigationMode: "default",
-  plugins: [RevealMarkdown, RevealHighlight, RevealNotes]
-});
-```
-
-Este ejemplo resume la inicialización que hace `assets/js/app.mjs`. Reveal.js crea las diapositivas desde `README.md`; Mermaid renderiza los diagramas posteriormente.
-
----
-
-## Diagramas de secuencia para explicar procesos
-
-```mermaid
-sequenceDiagram
-    autonumber
-    participant U as Usuario
-    participant P as GitHub Pages
-    participant R as Reveal.js
-    participant M as README.md
-    U->>P: Abre la URL
-    P-->>U: Devuelve HTML, JS y CSS
-    R->>M: Solicita Markdown
-    M-->>R: Entrega el contenido
-    R-->>U: Muestra las diapositivas
-```
-
-En GitHub este bloque se muestra como diagrama; en GitHub Pages se convierte a SVG con la paleta de tu presentación.
-
----
-
-## Gráficos: números sin archivos adicionales
-
-```mermaid
-pie showData
-    title Uso ilustrativo del taller
-    "Conceptos" : 25
-    "Demostración" : 30
-    "Práctica" : 45
-```
-
-Este gráfico muestra una **distribución ficticia e ilustrativa**, no estadísticas de usuarios de la plantilla. Su fuente es un bloque Mermaid editable dentro de este README.
-
----
-
-## Comparación: ¿cuándo usar cada formato?
-
-| Caso de uso | README to Slides | PowerPoint / Canva |
-| :--- | :---: | :---: |
-| Documentación y slides desde una fuente | ✅ | Requiere coordinación |
-| Código y diagramas versionados con Git | ✅ | Menos directo |
-| Publicación como web en GitHub Pages | ✅ | Flujo de exportación |
-| Edición visual libre y pixel-perfect | Limitada | ✅ |
-| Trabajo sin Internet tras cargar la web | Depende de CDN | Depende de herramienta |
-| Incorporar cambios mediante pull requests | ✅ | Menos directo |
-
-La herramienta **no genera PPTX**; su objetivo es presentar contenido técnico como página web.
-
-**Extras:** videos sin escribir `iframe`, temas oscuros/claros configurables y controles contextuales que dejan más espacio visual al contenido.
-
----
-
-## Dos formas de reutilizar el proyecto
-
-**A · Crear tu repositorio desde la plantilla:** pulsa **Use this template**, edita `presentation.config.json`, reemplaza el contenido de `README.md` y activa Pages. Personaliza o conserva los datos de ejemplo del autor según tu objetivo.
-
-**B · Visualizar un README público:** agrega `?url=` al visor e indica el enlace de GitHub:
-
-```text
-https://jorgektch.github.io/readme-to-slides/?url=https://github.com/USUARIO/REPO/blob/main/README.md
-```
-
-En el modo remoto solo se admiten READMEs públicos en GitHub. El HTML remoto se muestra como texto por precaución y algunas imágenes con rutas relativas pueden necesitar URLs absolutas.
-
----
-
-## Publicación y pruebas
-
-**Publicación:** `Settings → Pages → Deploy from a branch → main → /(root)`.
-
-**Pruebas de configuración y Markdown:**
+## 08 · ¡Abramos Python!
 
 ```bash
-node --test tests/*.test.mjs
-python tests/check_deck.py
+python 01_explorar_documentos.py
 ```
 
-**Pruebas de navegador (opcional):** instala las dependencias (`npm install`), el navegador (`npx playwright install chromium`), inicia `python -m http.server 8765` y ejecuta `npm run test:e2e`.
+**Pregunta interactiva:** ¿un documento debe ser un chunk, o podría dividirse? ¿Qué pasa cuando se separa una condición de su excepción?
 
-El repositorio incluye un workflow de GitHub Actions para ejecutar estas comprobaciones cuando publiques cambios.
+```python
+from rag_core import load_documents, chunk_documents
+chunks = chunk_documents(load_documents(), size=30, overlap=6)
+print(len(chunks))
+```
 
----
-
-## Límites y decisiones de seguridad
-
-- La presentación utiliza bibliotecas, fuentes e imágenes externas: necesita conexión para cargarlas.
-- Los videos de YouTube y Vimeo solo funcionan si el propietario permite incrustarlos; pueden aparecer restricciones de cookies o de red.
-- Los enlaces multimedia se convierten únicamente para proveedores reconocidos o archivos de video compatibles; no se ejecuta HTML externo.
-- Las credenciales o datos privados no deben incluirse en un README público.
-- La plantilla admite HTML local para layouts especiales; **no ejecutes HTML de terceros como si fuera seguro**.
-- El modo `?url=` escapa HTML remoto, pero **no sustituye una política de seguridad completa** para servicios multiusuario.
-- El visor no reemplaza una aplicación de diseño gráfico ni produce archivos `.pptx`.
-
-Consulta [la guía de temas y videos](docs/MEDIA_AND_THEMES.md), [SECURITY.md](SECURITY.md) y la guía [CUSTOMIZATION.md](docs/CUSTOMIZATION.md) para recomendaciones adicionales, y [CONTRIBUTING.md](CONTRIBUTING.md) para colaborar.
+La cantidad de fragmentos depende del tamaño y solapamiento elegidos.
 
 ---
 
-## Ejercicio: úsalo en tu próximo taller
+## 09 · Nuestro primer recuperador
 
-1. Crea un repositorio desde esta plantilla.
-2. Cambia el título, autor y color de acento en el JSON.
-3. Sustituye este contenido por una charla real.
-4. Añade un diagrama Mermaid, una tabla y un bloque de código.
-5. Publica GitHub Pages y comparte la URL.
+```bash
+python 02_busqueda_semantica_aproximada.py "¿Cuánto tarda un envío en Lima?"
+```
 
-**Extra:** añade una diapositiva vertical con `--` y notas con `Note:`.
+Aunque el archivo tiene ese nombre, implementa **búsqueda léxica TF-IDF**, no embeddings neuronales. Muestra top-k, fragmentos y puntuaciones de coseno.
 
-Note: Haz la demostración con otro repositorio para comprobar que el proceso no depende del creador de la plantilla.
+```python
+from rag_core import retrieve
+resultados = retrieve('¿Cuál es la garantía del marco?', k=3)
+for r in resultados:
+    print(r['documento_id'], r['score'])
+```
 
 ---
 
-## Open source y próximos pasos
+## 10 · Laboratorio público: la pregunta manda
 
-**Licencia:** MIT. Puedes utilizar, modificar, redistribuir e incorporar el proyecto en otras herramientas respetando sus condiciones.
+<div class="feature-grid">
+  <div class="feature-card"><span class="card-kicker">RETO A</span><h3>Preguntas fáciles</h3><p>¿Qué plazo tengo para realizar un cambio?</p></div>
+  <div class="feature-card"><span class="card-kicker">RETO B</span><h3>Preguntas difíciles</h3><p>¿Cuántas bicicletas tienen en stock ahora?</p></div>
+  <div class="feature-card"><span class="card-kicker">RETO C</span><h3>Fuera del corpus</h3><p>¿Quién gobierna Saturno?</p></div>
+</div>
 
-**Contribuciones:** reportes de bugs, mejoras de accesibilidad, plantillas de diseño, pruebas adicionales y soporte para más componentes Markdown son bienvenidos.
+**[Abrir demo interactiva de recuperación](demo/)**. El público propone preguntas, observa fuentes y detecta respuestas no fundamentadas.
 
-**Prioridad del proyecto:** mantener la solución ligera, accesible y útil para docentes, comunidades técnicas y equipos de ingeniería.
+Note: Mostrar la URL de la demo en el navegador. GitHub Pages la sirve sin backend. Recalcar que no hay LLM en la demo web.
 
-[Ver LICENSE](LICENSE) · [Cómo contribuir](CONTRIBUTING.md) · [Abrir un issue](https://github.com/jorgektch/readme-to-slides/issues)
+---
+
+## 11 · ¡Co-creemos los documentos!
+
+**Dinámica de 10 minutos:** equipos proponen una regla **inventada** para DemoBici y una pregunta que la ponga a prueba.
+
+1. Formular una pregunta que hoy no se responde.
+2. Agregar un documento con título y texto en la demo.
+3. Repetir la consulta y comparar ranking.
+4. Debatir si la evidencia encontrada realmente contesta.
+
+**El contenido se agrega solo en memoria de esa pestaña.** No se publica ni actualiza GitHub.
+
+---
+
+## 12 · El reto de la abstención
+
+Supongamos que alguien pregunta: **«¿Qué descuentos hay para bicicletas hoy?»**
+
+La base contiene una promoción **para accesorios**, no para bicicletas. La coincidencia en «descuentos» no basta para justificar un descuento de bicicletas.
+
+**Regla:** un score alto no equivale a una respuesta correcta. La aplicación debe poder decir «no tengo evidencia suficiente».
+
+Note: Comparar *relevancia del fragmento* con *entailment* (que la afirmación se desprenda realmente del texto).
+
+---
+
+## 13 · La generación: paso opcional con Gemini
+
+```bash
+python 03_rag_con_llm.py "¿Cómo funcionan los cambios?"
+```
+
+Sin `GEMINI_API_KEY` → se muestran fragmentos recuperados.
+
+Con `GEMINI_API_KEY` → se envía pregunta + fragmentos a un LLM para formular una respuesta, solicitando citar IDs como `[DOC-01]`.
+
+**Nunca expongas claves en código cliente, diapositivas ni repositorios.** La generación puede fallar, costar dinero o alucinar.
+
+---
+
+## 14 · Demostración más grande: asistente documental
+
+```mermaid
+flowchart TD
+ U["Participante"] --> P["Pregunta"]
+ P --> T["TF-IDF + coseno"]
+ K[("8 documentos DemoBici")] --> T
+ T --> C["Top-k y fuentes"]
+ C --> V{"¿API key configurada?"}
+ V -->|"No"| O["Extractos offline"]
+ V -->|"Sí"| L["LLM externo + instrucciones"]
+ L --> R["Respuesta generada"]
+ O --> E["Evaluar fundamento"]
+ R --> E
+```
+
+La demo **mayor** es el script `03_rag_con_llm.py` con recuperación real local, fuentes y generación opcional; la demo web es un visualizador educativo independiente.
+
+---
+
+## 15 · Evaluemos, no solo aplaudamos la demo
+
+```bash
+python 04_evaluacion_offline.py
+python -m unittest discover -s tests -p 'test_rag.py'
+node --test tests/rag-demo.test.mjs
+```
+
+Medimos **hit@3 didáctico** y una consulta fuera de corpus; no estamos midiendo calidad clínica ni afirmando precisión de producción. Los casos pueden fallar si el vocabulario cambia: eso también es aprendizaje.
+
+[Ver rúbrica](docs/EVALUACION.md).
+
+---
+
+## 16 · RAG no es una política de seguridad
+
+- Documentos pueden contener instrucciones maliciosas (*prompt injection*).
+- No deben recuperarse textos que el usuario no esté autorizado a consultar.
+- El proveedor de LLM recibe contexto cuando está habilitado.
+- Fuentes pueden estar vencidas; los IDs no garantizan verdad.
+- Nunca asumir que el modelo validó stock o realizó transacciones.
+
+[Guía de seguridad y privacidad](docs/SEGURIDAD.md).
+
+---
+
+## 17 · Conectemos lo aprendido
+
+```mermaid
+flowchart LR
+ U["Usuario"] --> A["Agente IA"]
+ A --> M["Tools MCP: inventario"]
+ A --> R["Tool MCP futura: buscar conocimiento"]
+ M --> F["Datos de stock y cotización"]
+ R --> D["Fragmentos + IDs"]
+ F --> X["Respuesta integrada"]
+ D --> X
+```
+
+**Taller 1:** agente con herramientas. **Taller 2:** agente con herramientas MCP. **Taller 3:** RAG para datos documentales. **Siguiente taller:** orquestación de los tres.
+
+**Este repositorio aún no integra MCP:** explica el contrato y deja el diseño listo para desarrollarlo después.
+
+---
+
+## 18 · Propuesta del siguiente proyecto
+
+**«Asistente de DemoBici con RAG + MCP»**
+
+- Si preguntan por política: recuperar documentos con citas.
+- Si preguntan por stock o precio: llamar herramientas MCP.
+- Si preguntan «¿tienen bicicletas y qué garantía ofrecen?»: combinar ambas rutas.
+- Si la evidencia falta o la herramienta falla: informar el límite.
+
+[Plan detallado de integración futura](docs/INTEGRATION_NOTES.md).
+
+---
+
+## 19 · Desafío final por equipos
+
+**Diseña la pregunta más difícil que la demo pueda contestar con evidencia; luego diseña otra que obligue a abstenerse.**
+
+Para cerrar, cada equipo muestra: pregunta, fragmento recuperado, ID de fuente y explicación de por qué la respuesta está (o no) justificada.
+
+[Retos y extensiones](ejercicios/retos.md) · [Código de soluciones orientativas](ejercicios/soluciones.py).
+
+Note: Premiar la abstención correcta y la trazabilidad, no respuestas largas.
 
 ---
 
 <!-- .slide: class="closing" -->
 
 <div class="closing-card">
-  <p class="cover-kicker" data-config="eyebrow">OPEN SOURCE · MARKDOWN PRESENTATIONS</p>
-  <h1>¡Gracias!</h1>
+  <p class="cover-kicker" data-config="eyebrow">TALLER PRÁCTICO · IA GENERATIVA</p>
+  <h1>¡Ahora construyes IA con evidencia!</h1>
   <p class="cover-author" data-config="name">Jorge Jesús Quispe Villaverde</p>
   <p class="cover-role" data-config="role">AI Engineer · Applied AI Researcher · AI Mentor</p>
-  <p class="closing-question">¿Preguntas? ¿Qué construirás con esta plantilla?</p>
-  <div class="contact-row" aria-label="Contacto del expositor">
-    <a class="contact-email" data-config="email" href="mailto:jorgektch@gmail.com">jorgektch@gmail.com</a>
-    <div class="contact-socials" aria-label="Redes del expositor">
-      <a class="social-icon" data-social="github" href="https://github.com/jorgektch" aria-label="GitHub"><i class="fa-brands fa-github" aria-hidden="true"></i><span class="social-label">GitHub</span></a>
-      <a class="social-icon" data-social="instagram" href="https://www.instagram.com/jorgektch" aria-label="Instagram"><i class="fa-brands fa-instagram" aria-hidden="true"></i><span class="social-label">Instagram</span></a>
-      <a class="social-icon" data-social="tiktok" href="https://www.tiktok.com/@jorgektch" aria-label="TikTok"><i class="fa-brands fa-tiktok" aria-hidden="true"></i><span class="social-label">TikTok</span></a>
-      <span class="social-handle" data-config="handle">/jorgektch</span>
-    </div>
-  </div>
+  <p>Próximo reto: combinar **Agentes + MCP + RAG**.</p>
 </div>

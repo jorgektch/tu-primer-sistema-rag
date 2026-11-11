@@ -1,0 +1,2 @@
+# Taller offline: solo biblioteca estándar de Python 3.11+
+# Integración opcional con Gemini implementada con urllib (stdlib).

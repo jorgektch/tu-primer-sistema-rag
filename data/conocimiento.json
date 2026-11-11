@@ -1,0 +1,54 @@
+{
+  "version": "1.0",
+  "aviso": "Datos enteramente ficticios para enseñar RAG, sin compradores reales.",
+  "documentos": [
+    {
+      "id": "DOC-01",
+      "titulo": "Política de cambios",
+      "categoria": "politicas",
+      "texto": "La tienda DemoBici permite cambios dentro de 15 días calendario desde la entrega, presentando comprobante. El producto debe estar sin uso y con accesorios completos. No hay devoluciones en efectivo en esta demostración."
+    },
+    {
+      "id": "DOC-02",
+      "titulo": "Envíos y recojo",
+      "categoria": "logistica",
+      "texto": "DemoBici ofrece recojo gratuito en tienda de lunes a viernes de 10:00 a 18:00. Los envíos simulados dentro de Lima tardan entre 2 y 4 días hábiles y cuestan S/ 12. No se realizan envíos fuera de Lima en esta demo."
+    },
+    {
+      "id": "DOC-03",
+      "titulo": "Garantía de bicicletas",
+      "categoria": "garantias",
+      "texto": "Las bicicletas de DemoBici incluyen una garantía ficticia de 12 meses por defectos de fabricación del marco. Se excluyen golpes, desgaste y daños por uso indebido. La garantía requiere comprobante de compra."
+    },
+    {
+      "id": "DOC-04",
+      "titulo": "Guía de seguridad vial",
+      "categoria": "seguridad",
+      "texto": "Para circular en bicicleta se recomienda usar casco correctamente ajustado, luces visibles y revisar frenos y presión de neumáticos antes de salir. Estas recomendaciones son educativas."
+    },
+    {
+      "id": "DOC-05",
+      "titulo": "Taller de mantenimiento",
+      "categoria": "servicios",
+      "texto": "El servicio de ajuste básico ficticio incluye inspección de frenos, lubricación de cadena y regulación de cambios. Se atiende con cita previa los sábados de 09:00 a 13:00. Precio referencial S/ 35."
+    },
+    {
+      "id": "DOC-06",
+      "titulo": "Promoción para estudiantes",
+      "categoria": "promociones",
+      "texto": "La promoción ficticia para estudiantes ofrece un 10 por ciento de descuento en accesorios, no en bicicletas, hasta el 30 de noviembre de 2026. No es acumulable y requiere identificación estudiantil."
+    },
+    {
+      "id": "DOC-07",
+      "titulo": "Accesibilidad del taller",
+      "categoria": "evento",
+      "texto": "El taller demostrativo de inteligencia artificial usa datos inventados. Los participantes pueden proponer preguntas o un nuevo artículo de conocimiento; no deben enviar datos privados ni credenciales."
+    },
+    {
+      "id": "DOC-08",
+      "titulo": "Stock y precios: límite del RAG",
+      "categoria": "integracion",
+      "texto": "Los documentos de conocimiento pueden explicar políticas, pero no acreditan stock ni precios actualizados. Para consultar disponibilidad o cotizar se necesita una herramienta conectada al inventario autorizado del taller MCP."
+    }
+  ]
+}
